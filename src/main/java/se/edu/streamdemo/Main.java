@@ -14,14 +14,18 @@ public class Main {
         System.out.println("Welcome to Task manager (using streams)");
         Datamanager dataManager = new Datamanager("./data/data.txt");
         ArrayList<Task> tasksData = dataManager.loadData();
-
+        
         //System.out.println("Printing all data ...");
         //printAllData(tasksData);
 
         System.out.println("Printing deadlines ...");
         printDeadlines(tasksData);
         printDeadlinesUsingStream(tasksData);
-        System.out.println("Total number of deadlines: " + countDeadlines(tasksData));
+
+        System.out.println("Total number of deadlines (iterating): "
+                + countDeadlines(tasksData));
+        System.out.println("Total number of deadlines (using stream): "
+                + countDeadlinesUsingStream(tasksData));
 
         ArrayList<Task> filteredList = filterTasksByString(tasksData, "11");
         printAllData(filteredList);
@@ -38,12 +42,20 @@ public class Main {
     }
 
     public static void printAllData(ArrayList<Task> tasksData) {
+        System.out.println("Printing data with iteration");
         for (Task t : tasksData) {
             System.out.println(t);
         }
     }
 
+    public static void printDataWithStreams(ArrayList<Task> tasks) {
+        System.out.println("Printing data with streams");
+        tasks.stream()                          // create a stream
+                .forEach(System.out::println);  // terminal operator
+    }
+
     public static void printDeadlines(ArrayList<Task> tasksData) {
+        System.out.println("Printing deadlines with iteration");
         for (Task t : tasksData) {
             if (t instanceof Deadline) {
                 System.out.println(t);
@@ -58,10 +70,20 @@ public class Main {
                 .forEach(System.out::println);
     }
 
+
     public static ArrayList<Task> filterTasksByString(ArrayList<Task> tasks, String filterString) {
         ArrayList<Task> filterList = (ArrayList<Task>) tasks.stream()
                 .filter((t) -> t.getDescription().contains(filterString))
                 .collect(toList());
         return filterList;
+    }
+    
+
+    public static int countDeadlinesUsingStream(ArrayList<Task> tasks) {
+        int count = (int) tasks.stream()
+                .filter((t) -> t instanceof Deadline)  //lambda function
+                .count(); // terminal operation; aggregate operation
+
+        return count;
     }
 }
